@@ -13,6 +13,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Fix file locations
+      run: |
+        echo "=== Переміщуємо файли з .github/workflows у корінь ==="
+        mv .github/workflows/app ./ 2>/dev/null || true
+        mv .github/workflows/build.gradle ./ 2>/dev/null || true
+        mv .github/workflows/settings.gradle ./ 2>/dev/null || true
+
     - name: Set up JDK 11
       uses: actions/setup-java@v4
       with:
@@ -38,7 +45,7 @@ jobs:
         fi
 
     - name: Build Debug APK
-      run: gradle assembleDebug --no-daemon
+      run: gradle :app:assembleDebug --no-daemon
 
     - name: Upload Finished APK
       uses: actions/upload-artifact@v4
