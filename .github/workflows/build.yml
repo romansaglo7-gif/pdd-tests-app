@@ -1,0 +1,43 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v2
+
+    - name: Download official PDD questions & assets
+      run: |
+        mkdir -p app/src/main/assets/images
+        git clone --depth 1 https://github.com/thewh1teagle/pdd-tests-scrap.git /tmp/pdd-data || true
+        if [ -d "/tmp/pdd-data" ]; then
+          cp -r /tmp/pdd-data/images/* app/src/main/assets/images/ 2>/dev/null || true
+          cp /tmp/pdd-data/questions.json app/src/main/assets/questions.json 2>/dev/null || true
+        fi
+
+    - name: Build Debug APK
+      run: |
+        gradle wrapper
+        ./gradlew assembleDebug --no-daemon
+
+    - name: Upload Finished APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: PDD-Android-4.1-App
+        path: app/build/outputs/apk/debug/*.apk
