@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (q.imageFile != null && !q.imageFile.isEmpty()) {
             try {
-                InputStream is = getAssets().open("images/" + q.image деFile);
+                InputStream is = getAssets().open("images/" + q.imageFile);
                 Bitmap bmp = BitmapFactory.decodeStream(is);
                 is.close();
                 ivQuestion.setImageBitmap(bmp);
